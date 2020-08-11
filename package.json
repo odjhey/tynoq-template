@@ -1,0 +1,61 @@
+{
+  "name": "backend-structure-with-gql",
+  "version": "0.0.1",
+  "main": "server.js",
+  "author": "Odee <odjhey@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p . && copyfiles -u 1 src/**/*.graphql dist/",
+    "prd": "NODE_ENV=production node dist/server.js",
+    "dev": "concurrently -k -n TYPESCOMPILE,COPYFILES,COMPILER,NODEMON -c gray,gray,gray,blue \"yarn gen-gql-types --watch\" \"chokidar './src/**/*.graphql' -c 'copyfiles -u 1 ./src/**/*.graphql dist/'\" \"tsc -w\" \"nodemon -e js,graphql -w dist dist/server.js\"",
+    "predev": "yarn build",
+    "gen-gql-types": "graphql-codegen --config codegen.yml",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint \"src/**/*\"",
+    "happy": "yarn format && yarn lint && yarn test",
+    "release": "yarn happy && standard-version",
+    "release:beta": "yarn happy && standard-version -p beta"
+  },
+  "dependencies": {
+    "@graphql-tools/load-files": "^6.0.13",
+    "@graphql-tools/merge": "^6.0.13",
+    "apollo-server": "^2.15.1",
+    "dotenv": "^8.2.0",
+    "graphql": "^15.3.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.17.0",
+    "@graphql-codegen/introspection": "1.17.0",
+    "@graphql-codegen/typescript": "1.17.0",
+    "@graphql-codegen/typescript-resolvers": "1.17.0",
+    "@types/jest": "^26.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "chokidar-cli": "^2.1.0",
+    "concurrently": "^5.2.0",
+    "copyfiles": "^2.3.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-typescript": "^8.0.2",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "lint-staged": "^10.2.11",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "standard-version": "^8.0.2",
+    "typescript": "^3.9.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && yarn test"
+    }
+  },
+  "lint-staged": {
+    "./src/**/*.{js,jsx,ts,tsx}": [
+      "yarn lint --fix-dry-run"
+    ]
+  }
+}
